@@ -41,7 +41,8 @@
       this.retryAttempt = 0;
       this.audio.src = src;
       this.audio.load();
-    } else if (!this.src) {
+    } else if (!this.src || this.state === "playing" || this.state === "loading" ||
+        this.state === "retrying") {
       return;
     }
     this._setState(this.state === "paused" ? "playing" : "loading");
