@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1920, height=1080, user-scalable=no">
+  <title>Quraan</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="$WEBAPIS/webapis/webapis.js"></script>
+</head>
+<body>
+  <div id="app">
+    <header class="header">
+      <div class="brand">
+        <span class="brand-ar" lang="ar" dir="rtl">القرآن الكريم</span>
+        <span class="brand-en">Quraan &mdash; Loop Player</span>
+      </div>
+      <div class="clock" id="clock"></div>
+    </header>
+
+    <main class="columns">
+      <section class="column reciters" aria-label="Reciters">
+        <h2>Reciter</h2>
+        <ul class="list" id="reciter-list"></ul>
+      </section>
+
+      <section class="column surahs" aria-label="Surahs">
+        <h2>Surah</h2>
+        <ul class="list" id="surah-list"></ul>
+      </section>
+
+      <section class="column now-playing" aria-label="Now playing">
+        <h2>Now playing</h2>
+        <div class="np-card">
+          <div class="np-state" id="np-state" data-state="stopped">Stopped</div>
+          <div class="np-surah-ar" id="np-surah-ar" lang="ar" dir="rtl"></div>
+          <div class="np-surah" id="np-surah"></div>
+          <div class="np-reciter" id="np-reciter"></div>
+          <div class="np-progress"><div class="np-progress-fill" id="np-progress-fill"></div></div>
+          <div class="np-times"><span id="np-elapsed">0:00</span><span id="np-duration">0:00</span></div>
+          <div class="np-loops" id="np-loops">Repeats until you press Stop</div>
+          <div class="controls" id="controls">
+            <button class="control" id="btn-toggle" data-action="toggle">Play</button>
+            <button class="control" id="btn-stop" data-action="stop">Stop</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="legend">
+      <span><b>OK</b> select / play</span>
+      <span><b>&#9654;&#10074;&#10074;</b> play / pause</span>
+      <span><b>&#9632;</b> stop</span>
+      <span><b>&#9664;&#9664; &#9654;&#9654;</b> previous / next surah</span>
+      <span><b>0&ndash;9</b> jump to surah number</span>
+      <span><b>Back</b> stop, then exit</span>
+    </footer>
+
+    <div class="number-entry hidden" id="number-entry"></div>
+  </div>
+
+  <audio id="audio"></audio>
+  <!-- Compiled from src/*.ts by `npm run build` -->
+  <script src="js/app.js"></script>
+</body>
+</html>

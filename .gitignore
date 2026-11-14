@@ -1,0 +1,7 @@
+build/
+dist/
+js/
+node_modules/
+*.wgt
+.DS_Store
+__pycache__/

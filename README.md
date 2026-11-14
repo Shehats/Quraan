@@ -21,19 +21,31 @@ The last reciter and surah are remembered. The TV screensaver is disabled while 
 
 ## How it works
 
-- Plain HTML/CSS/ES5 JavaScript Tizen web app (`config.xml`, `index.html`, `js/`, `css/`), no build step.
-- `js/player.js` — `LoopPlayer`: `<audio loop>` plus a manual restart on `ended` (some TV media
-  pipelines ignore `loop`), loop counting, and retry with backoff on errors/stalls.
-- `js/app.js` — UI, focus navigation, Tizen remote key registration, screensaver control.
-- `js/data.js` — 14 reciters and the 114 surahs. Audio streams from
-  `https://download.quranicaudio.com/quran/<reciter>/<NNN>.mp3`, so the TV needs internet access.
-  To add a reciter, append an entry with its `relative_path` from `https://quranicaudio.com/api/qaris`.
+- Tizen web app written in **TypeScript** (`src/`), compiled by `tsc` to a single ES5 script,
+  `js/app.js`, so it runs on older Samsung TVs (Tizen 3.0 / 2017+). `js/` is build output.
+- Reciters, surahs and audio URLs come from the public [Quran.com API v4](https://api-docs.quran.com)
+  (no key needed):
+  - `GET /api/v4/chapters` — the 114 surahs (names, Arabic names, meanings, verse counts)
+  - `GET /api/v4/resources/chapter_reciters` — reciters with whole-surah audio
+  - `GET /api/v4/chapter_recitations/{reciter_id}` — the MP3 URL of every surah for a reciter
+  
+  Each response is cached in `localStorage`, so the lists still load if Quran.com is unreachable.
+  Audio streams from Quran.com's CDN, so the TV needs internet access.
+- `src/api.ts` — Quran.com client with the cache fallback.
+- `src/player.ts` — `LoopPlayer`: `<audio loop>` plus a manual restart on `ended` (some TV media
+  pipelines ignore `loop`), loop counting, and retry with backoff when resolving the URL, loading
+  or streaming fails.
+- `src/app.ts` — UI, focus navigation, Tizen remote key registration, screensaver control.
 
 No API keys or secrets are needed.
 
-## Run in a desktop browser
+## Build and run in a desktop browser
+
+Requires Node.js 18+.
 
 ```bash
+npm ci
+npm run build          # or `npm run watch`; `npm run typecheck` for type checking only
 python3 -m http.server 8080
 # open http://localhost:8080 — arrows/Enter navigate, Space = play/pause, Esc/Backspace = Back
 ```
@@ -59,7 +71,7 @@ CDP_URL=http://localhost:9222 python3 tests/smoke.py   # Chrome started with --r
    ```bash
    export PATH="$HOME/tizen-studio/tools:$HOME/tizen-studio/tools/ide/bin:$PATH"
    sdb connect <TV_IP>
-   TIZEN_PROFILE=quraan ./scripts/package.sh          # -> dist/Quraan.wgt
+   TIZEN_PROFILE=quraan ./scripts/package.sh          # compiles TS, -> dist/Quraan.wgt
    tizen install -n dist/Quraan.wgt -t <TV_NAME>       # TV_NAME from `sdb devices`
    tizen run -p QrnLoopTv1.Quraan -t <TV_NAME>
    ```

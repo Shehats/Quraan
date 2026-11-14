@@ -1,0 +1,185 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  background: #06231d;
+  color: #f4efe1;
+  font-family: "SamsungOne", "Samsung Sans", "Roboto", "Helvetica Neue", Arial, sans-serif;
+}
+
+[lang="ar"] { font-family: "SamsungOneArabic", "Noto Naskh Arabic", "Amiri", "Geeza Pro", serif; }
+
+#app {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  padding: 48px 96px 40px;
+  background: radial-gradient(circle at 80% 0%, #0f4a3c 0%, #06231d 55%, #031512 100%);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 96px;
+}
+
+.brand-ar { font-size: 56px; color: #e3c375; margin-right: 28px; }
+.brand-en { font-size: 30px; color: #b9cfc6; letter-spacing: 1px; }
+.clock { font-size: 36px; color: #b9cfc6; }
+
+.columns {
+  display: flex;
+  height: 816px;
+  margin-top: 16px;
+}
+
+.column { display: flex; flex-direction: column; margin-right: 40px; }
+.column:last-child { margin-right: 0; }
+.column h2 {
+  font-size: 26px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: #8fb3a6;
+  margin-bottom: 16px;
+}
+
+.reciters { width: 500px; }
+.surahs { width: 640px; }
+.now-playing { flex: 1; }
+
+.list {
+  list-style: none;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  height: 68px;
+  padding: 0 24px;
+  margin-bottom: 8px;
+  border-radius: 14px;
+  border: 3px solid transparent;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 28px;
+  white-space: nowrap;
+}
+
+.item .num {
+  width: 64px;
+  color: #8fb3a6;
+  font-variant-numeric: tabular-nums;
+}
+.item .name { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+.item .ar { font-size: 32px; color: #e3c375; margin-left: 16px; }
+.item .meta { font-size: 22px; color: #8fb3a6; margin-left: 16px; }
+
+.item.placeholder { color: #8fb3a6; font-style: italic; }
+.item.selected { background: rgba(227, 195, 117, 0.16); }
+.item.selected .name::after { content: "  \2022"; color: #e3c375; }
+.item.playing .num { color: #e3c375; }
+
+.focus-zone .item.focused,
+.control.focused {
+  border-color: #e3c375;
+  background: #e3c375;
+  color: #06231d;
+}
+.focus-zone .item.focused .num,
+.focus-zone .item.focused .ar,
+.focus-zone .item.focused .meta { color: #06231d; }
+
+.np-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 40px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(227, 195, 117, 0.25);
+}
+
+.np-state {
+  align-self: flex-start;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 8px 20px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #b9cfc6;
+}
+.np-state[data-state="playing"] { background: #2e8b57; color: #fff; }
+.np-state[data-state="loading"],
+.np-state[data-state="retrying"] { background: #b8860b; color: #fff; }
+.np-state[data-state="paused"] { background: #555f5b; color: #fff; }
+
+.np-surah-ar { font-size: 96px; color: #e3c375; margin-top: 36px; min-height: 130px; text-align: right; }
+.np-surah { font-size: 40px; margin-top: 8px; min-height: 52px; }
+.np-reciter { font-size: 28px; color: #b9cfc6; margin-top: 8px; min-height: 36px; }
+
+.np-progress {
+  height: 10px;
+  margin-top: 48px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+.np-progress-fill { height: 100%; width: 0; background: #e3c375; }
+.np-times {
+  display: flex;
+  justify-content: space-between;
+  font-size: 24px;
+  color: #b9cfc6;
+  margin-top: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.np-loops { font-size: 26px; color: #8fb3a6; margin-top: 24px; }
+
+.controls { display: flex; margin-top: auto; }
+.control {
+  flex: 1;
+  height: 84px;
+  margin-right: 20px;
+  font-size: 32px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #f4efe1;
+  background: rgba(255, 255, 255, 0.08);
+  border: 3px solid transparent;
+  border-radius: 16px;
+  outline: none;
+}
+.control:last-child { margin-right: 0; }
+
+.legend {
+  display: flex;
+  justify-content: space-between;
+  height: 56px;
+  align-items: flex-end;
+  font-size: 24px;
+  color: #8fb3a6;
+}
+.legend b { color: #f4efe1; margin-right: 6px; }
+
+.number-entry {
+  position: absolute;
+  top: 420px;
+  left: 760px;
+  width: 400px;
+  padding: 32px;
+  text-align: center;
+  font-size: 48px;
+  border-radius: 24px;
+  background: rgba(3, 21, 18, 0.95);
+  border: 3px solid #e3c375;
+}
+.number-entry small { display: block; font-size: 26px; color: #b9cfc6; margin-top: 8px; }
+.hidden { display: none; }
