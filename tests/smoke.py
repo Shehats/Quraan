@@ -56,6 +56,10 @@ with sync_playwright() as p:
     assert "abdul_basit_murattal/113.mp3" in s["src"] and s["state"] == "playing"
     page.screenshot(path=f"{SHOTS}/4-reciter-changed.png")
 
+    # OK on the surah that is already playing, and the Play key, must not interrupt playback
+    key(page, 13); key(page, 415); time.sleep(1.5)
+    s = st(page); print("reselect + play key", s); assert s["state"] == "playing" and s["t"] > 3, s
+
     # Back stops playback
     key(page, 10009); s = st(page); print("back", s); assert s["state"] == "stopped"
     page.screenshot(path=f"{SHOTS}/5-stopped.png")
@@ -63,6 +67,10 @@ with sync_playwright() as p:
     # Error recovery: a broken URL goes to retrying, not stopped
     page.evaluate("QuraanApp.player.play('http://localhost:8080/missing.mp3')")
     time.sleep(1.5); s = st(page); print("broken src", s); assert s["state"] == "retrying"
+    assert page.evaluate("QuraanApp.player.retryAttempt") >= 1
+    key(page, 415); assert st(page)["state"] == "retrying", "Play key must not cancel recovery"
+    time.sleep(2.5)
+    assert page.evaluate("QuraanApp.player.retryAttempt") >= 2, "retry should be attempted again"
     page.evaluate("QuraanApp.player.stop()")
     page.close()
     print("OK")
