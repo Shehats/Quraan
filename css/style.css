@@ -80,6 +80,7 @@ html, body {
 .item .ar { font-size: 32px; color: #e3c375; margin-left: 16px; }
 .item .meta { font-size: 22px; color: #8fb3a6; margin-left: 16px; }
 
+.item.placeholder { color: #8fb3a6; font-style: italic; }
 .item.selected { background: rgba(227, 195, 117, 0.16); }
 .item.selected .name::after { content: "  \2022"; color: #e3c375; }
 .item.playing .num { color: #e3c375; }

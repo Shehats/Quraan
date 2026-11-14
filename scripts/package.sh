@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Builds a signed Quraan.wgt with the Tizen Studio CLI.
+# Compiles the TypeScript sources and builds a signed Quraan.wgt with the Tizen Studio CLI.
 #   TIZEN_PROFILE  security profile name from Tizen Studio Certificate Manager (default: quraan)
 #   TIZEN_CLI      path to the `tizen` binary (default: `tizen` on PATH or ~/tizen-studio)
 set -euo pipefail
@@ -14,6 +14,8 @@ if [ ! -x "$TIZEN" ]; then
   echo "Tizen CLI not found. Install Tizen Studio (CLI) or set TIZEN_CLI." >&2
   exit 1
 fi
+
+(cd "$ROOT" && { [ -d node_modules ] || npm ci; } && npm run build)
 
 rm -rf "$BUILD" "$DIST"
 mkdir -p "$BUILD" "$DIST"

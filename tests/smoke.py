@@ -22,6 +22,7 @@ with sync_playwright() as p:
     page.goto(URL)
     page.evaluate("localStorage.clear()")
     page.reload()
+    page.wait_for_function("QuraanApp.catalog().surahs.length === 114 && QuraanApp.catalog().reciters.length > 1", timeout=30000)
     page.screenshot(path=f"{SHOTS}/1-idle.png")
 
     # Jump to surah 112 with digits, wait for auto-commit
@@ -53,7 +54,8 @@ with sync_playwright() as p:
     # Change reciter while playing (Left to reciters, Down, OK)
     key(page, 37); key(page, 40); key(page, 13); time.sleep(3)
     s = st(page); print("reciter", s)
-    assert "abdul_basit_murattal/113.mp3" in s["src"] and s["state"] == "playing"
+    assert s["src"].endswith("/113.mp3") and "mishari_al_afasy/murattal" not in s["src"] and s["state"] == "playing", s
+    assert s["loops"] == 0, "switching reciter must not count as a loop"
     page.screenshot(path=f"{SHOTS}/4-reciter-changed.png")
 
     # OK on the surah that is already playing, and the Play key, must not interrupt playback
@@ -65,12 +67,32 @@ with sync_playwright() as p:
     page.screenshot(path=f"{SHOTS}/5-stopped.png")
 
     # Error recovery: a broken URL goes to retrying, not stopped
-    page.evaluate("QuraanApp.player.play('http://localhost:8080/missing.mp3')")
+    page.evaluate("QuraanApp.player.play({key: 'broken', resolveUrl: () => Promise.resolve('http://localhost:8080/missing.mp3')})")
     time.sleep(1.5); s = st(page); print("broken src", s); assert s["state"] == "retrying"
     assert page.evaluate("QuraanApp.player.retryAttempt") >= 1
     key(page, 415); assert st(page)["state"] == "retrying", "Play key must not cancel recovery"
     time.sleep(2.5)
     assert page.evaluate("QuraanApp.player.retryAttempt") >= 2, "retry should be attempted again"
     page.evaluate("QuraanApp.player.stop()")
+
+    # API failure while resolving the audio URL is retried as well
+    page.evaluate("QuraanApp.player.play({key: 'api-down', resolveUrl: () => Promise.reject(new Error('offline'))})")
+    time.sleep(0.5); s = st(page); print("api down", s); assert s["state"] == "retrying", s
+    page.evaluate("QuraanApp.player.stop()")
+
+    # Quran.com unreachable: the catalog comes from the last cached responses
+    page.route("https://api.quran.com/**", lambda route: route.abort())
+    page.reload()
+    page.wait_for_function("QuraanApp.catalog().surahs.length === 114", timeout=30000)
+    print("offline with cache: catalog loaded")
+
+    # ...and without a cache the app says so and keeps retrying
+    page.evaluate("localStorage.clear()")
+    page.reload()
+    page.wait_for_function("document.querySelector('#surah-list').textContent.indexOf('retrying') >= 0", timeout=30000)
+    page.screenshot(path=f"{SHOTS}/6-offline.png")
+    page.unroute("https://api.quran.com/**")
+    page.wait_for_function("QuraanApp.catalog().surahs.length === 114", timeout=30000)
+    print("offline without cache: recovered once the API was back")
     page.close()
     print("OK")
