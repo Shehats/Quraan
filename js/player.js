@@ -130,6 +130,7 @@
     this.retryTimer = setTimeout(function () {
       self.retryTimer = null;
       if (self.state !== "retrying") { return; }
+      self._setState("loading");
       self.audio.src = self.src;
       self.audio.load();
       var seekOnce = function () {
