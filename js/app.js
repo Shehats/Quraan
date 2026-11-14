@@ -308,7 +308,7 @@
       case KEY.ENTER:
         if (ui.numberBuffer) { commitNumberEntry(); } else { activateFocused(); }
         break;
-      case KEY.PLAY: if (player.state !== "playing") { togglePlayback(); } break;
+      case KEY.PLAY: if (!player.isActive() || player.state === "paused") { togglePlayback(); } break;
       case KEY.PAUSE: if (player.isActive()) { player.pause(); render(); } break;
       case KEY.PLAY_PAUSE: case KEY.SPACE: togglePlayback(); break;
       case KEY.STOP: stopPlayback(); break;
